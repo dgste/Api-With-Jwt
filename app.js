@@ -34,6 +34,15 @@ app.post('/auth/register', async (req, res) => {
         return res.status(422).json({msg: 'the passwords do not match'});
     }
 
+    //Check If User Existing
+    const userExists = await User.findOne({ email: email });
+    
+    if(userExists){
+        return res.status(422).json({msg: 'User already exists'});
+    }
+
+    //Create Password
+
     // Additional logic to handle user registration
     // Example:
     // const userExists = await User.findOne({ email });
