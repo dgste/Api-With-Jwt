@@ -42,6 +42,10 @@ app.post('/auth/register', async (req, res) => {
     }
 
     //Create Password
+    const salt = await bcrypt.genSalt(12)
+    const passwordHash = await bcrypt.hash(password, salt)
+
+    //Create User 
 
     // Additional logic to handle user registration
     // Example:
