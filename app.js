@@ -46,6 +46,18 @@ app.post('/auth/register', async (req, res) => {
     const passwordHash = await bcrypt.hash(password, salt)
 
     //Create User 
+    const user = new User ({
+        name, email, password: passwordHash
+    });
+
+    try{
+        user.save()
+        res.status(201).json({msg: "user created successfully"})
+
+    }catch(Error){
+        console.log(err)
+        return res.status(500).json({msg: 'Not Found, Try Again Later'});
+    }
 
     // Additional logic to handle user registration
     // Example:
@@ -64,6 +76,31 @@ app.post('/auth/register', async (req, res) => {
     // } catch (err) {
     //     res.status(500).json({ msg: 'Error registering user' });
     // }
+});
+
+app.post('/auth/user', async (req, res) => {
+    const { email, password } = req.body
+
+    //validations
+    if (!email) {
+        return res.status(422).json({msg: 'the email is mandatory'});
+    }
+    if (!password) {
+        return res.status(422).json({msg: 'the password is mandatory'});
+    }
+
+    //check if user existing
+    const user = await User.findOne({ email: email });
+    if(!user){
+        return res.status(422).json({msg: 'user not found'});
+    }
+
+    //check if password match 
+    const checkPassword = bcrypt.compare(password, user.password)
+    if(!checkPassword){
+        return res.status(404).json({msg: 'password invalid'});
+    }
+  
 });
 
 app.listen(3000, () => {
